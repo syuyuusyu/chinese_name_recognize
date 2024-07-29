@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import torch
+from module import Module1
 
 def pad_sequences(sequences, maxlen, padding='post', value=0):
     padded_sequences = []
@@ -24,7 +25,9 @@ def name_to_data(name):
     data = pad_sequences([code], maxlen=5, padding='post')[0]
     return torch.tensor(data, dtype=torch.long).unsqueeze(0).to(device)
 
-model = torch.load('pth/entire_model.pth')
+model = Module1(vocab_size=65536, embedding_dim=50, hidden_dim=20)
+# 加载模型状态字典
+model.load_state_dict(torch.load('pth/name_dict.pth', map_location=device))
 model.to(device)
 model.eval()
 
